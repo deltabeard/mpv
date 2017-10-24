@@ -742,25 +742,9 @@ video_output_features = [
         'deps': 'win32-desktop && shaderc && crossc',
         'func': check_cc(header_name=['d3d11_1.h', 'dxgi1_2.h']),
     }, {
-        # We need MMAL/bcm_host/dispmanx APIs. Also, most RPI distros require
-        # every project to hardcode the paths to the include directories. Also,
-        # these headers are so broken that they spam tons of warnings by merely
-        # including them (compensate with -isystem and -fgnu89-inline).
         'name': '--rpi',
         'desc': 'Raspberry Pi support',
-        'func': compose_checks(
-            check_cc(cflags="-isystem/opt/vc/include/ "+
-                            "-isystem/opt/vc/include/interface/vcos/pthreads " +
-                            "-isystem/opt/vc/include/interface/vmcs_host/linux " +
-                            "-fgnu89-inline",
-                     linkflags="-L/opt/vc/lib",
-                     header_name="bcm_host.h",
-                     lib=['mmal_core', 'mmal_util', 'mmal_vc_client', 'bcm_host']),
-            # We still need all OpenGL symbols, because the vo_opengl code is
-            # generic and supports anything from GLES2/OpenGL 2.1 to OpenGL 4 core.
-            check_cc(lib="EGL"),
-            check_cc(lib="GLESv2"),
-        ),
+        'func': check_rpi,
     } , {
         'name': '--ios-gl',
         'desc': 'iOS OpenGL ES hardware decoding interop support',
