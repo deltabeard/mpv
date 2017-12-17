@@ -1,8 +1,4 @@
 /*
- * PCM audio output driver
- *
- * Original author: Atmosfear
- *
  * This file is part of mpv.
  *
  * mpv is free software; you can redistribute it and/or
@@ -183,9 +179,9 @@ static int play(struct ao *ao, void **data, int samples, int flags)
 
 #define OPT_BASE_STRUCT struct priv
 
-const struct ao_driver audio_out_libretro = {
-    .description = "PCM output buffer for libretro",
-    .name      = "libretro",
+const struct ao_driver audio_out_audio_cb = {
+    .description = "Audio Callbacks for libmpv",
+    .name      = "audio-cb",
     .init      = init,
     .uninit    = uninit,
     .get_space = get_space,
@@ -198,5 +194,5 @@ const struct ao_driver audio_out_libretro = {
         OPT_FLAG("append", append, 0),
         {0}
     },
-    .options_prefix = "ao-libretro",
+    .options_prefix = "audio-cb",
 };
