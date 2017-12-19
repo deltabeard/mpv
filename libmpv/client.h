@@ -1707,6 +1707,17 @@ typedef enum mpv_sub_api {
  */
 void *mpv_get_sub_api(mpv_handle *ctx, mpv_sub_api sub_api);
 
+/**
+ * Obtain samples from the audio_callback audio driver.
+ *
+ * The audio_callback driver must have been selected and initialised prior to
+ * calling this function.
+ * This function fills a 16-bit block of data with len number of samples.
+ *
+ * Preliminary and not for submission.
+ */
+int mpv_audio_callback(uint16_t *stream, int len);
+
 #ifdef __cplusplus
 }
 #endif

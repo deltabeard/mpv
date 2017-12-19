@@ -26,10 +26,12 @@
 #include "mpv_talloc.h"
 
 #include "ao.h"
+#include "ao_cb.h"
 #include "audio/format.h"
 #include "common/msg.h"
 #include "internal.h"
 #include "options/m_option.h"
+#include "osdep/timer.h"
 
 struct priv {
 	float buflen;
@@ -37,14 +39,17 @@ struct priv {
 
 static struct ao *ao_cb = NULL;
 
-static void audio_callback(uint16_t *stream, int len)
+int audio_callback(uint16_t *stream, int len)
 {
     struct ao *ao = ao_cb;
 
     if(ao == NULL)
+    	return -1;
+
+	if(stream == NULL)
 	{
-		MP_ERR(ao, "audio_callback driver not initialised");
-    	return;
+		MP_ERR(ao, "stream must not be NULL");
+		return -1;
 	}
 
     void *data[1] = {stream};
@@ -56,7 +61,7 @@ static void audio_callback(uint16_t *stream, int len)
     // fixed latency.
     double delay = 2 * len / (double)ao->bps;
 
-    ao_read_data(ao, data, len / ao->sstride, mp_time_us() + 1000000LL * delay);
+    return ao_read_data(ao, data, len / ao->sstride, mp_time_us() + 1000000LL * delay);
 }
 
 static int init(struct ao *ao)
@@ -64,8 +69,6 @@ static int init(struct ao *ao)
     struct priv *priv = ao->priv;
 
 	ao->format = AF_FORMAT_S16;
-	/* TODO: Move to start of function */
-    struct mp_chmap_sel sel = {.tmp = ao};
 
     /* Force Stereo for now. TODO: Add Mono support. */
     //if (!ao_chmap_sel_adjust(ao, &sel, &ao->channels))
