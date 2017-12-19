@@ -35,6 +35,30 @@ struct priv {
 	float buflen;
 };
 
+static struct ao *ao_cb = NULL;
+
+static void audio_callback(uint16_t *stream, int len)
+{
+    struct ao *ao = ao_cb;
+
+    if(ao == NULL)
+	{
+		MP_ERR(ao, "audio_callback driver not initialised");
+    	return;
+	}
+
+    void *data[1] = {stream};
+
+    if (len % ao->sstride)
+        MP_ERR(ao, "SDL audio callback not sample aligned");
+
+    // Time this buffer will take, plus assume 1 period (1 callback invocation)
+    // fixed latency.
+    double delay = 2 * len / (double)ao->bps;
+
+    ao_read_data(ao, data, len / ao->sstride, mp_time_us() + 1000000LL * delay);
+}
+
 static int init(struct ao *ao)
 {
     struct priv *priv = ao->priv;
@@ -52,12 +76,17 @@ static int init(struct ao *ao)
 	MP_INFO(ao, "Samplerate: %d Hz Channels: %d Format: %s\n", ao->samplerate,
 			ao->channels.num, af_fmt_to_str(ao->format));
 
+	/* Setup for audio callback */
+	ao_cb = ao;
+
     return 0;
 }
 
 // close audio device
 static void uninit(struct ao *ao)
 {
+	ao_cb = NULL;
+
 	return;
 }
 
