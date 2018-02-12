@@ -44,12 +44,12 @@ int audio_callback(uint16_t *stream, int len)
     struct ao *ao = ao_cb;
 
     if(ao == NULL)
-    	return -1;
+		return -1;
 
 	if(stream == NULL)
 	{
 		MP_ERR(ao, "stream must not be NULL");
-		return -1;
+		return -2;
 	}
 
     void *data[1] = {stream};
@@ -102,7 +102,7 @@ static void resume (struct ao *ao)
 #define OPT_BASE_STRUCT struct priv
 
 const struct ao_driver audio_out_audio_cb = {
-    .description = "Audio Callbacks for libmpv",
+    .description = "Audio callback for libmpv",
     .name      = "audio-cb",
     .init      = init,
 	.uninit    = uninit,
