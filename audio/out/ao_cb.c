@@ -61,7 +61,16 @@ int audio_callback(uint16_t *stream, int len)
     // fixed latency.
     double delay = 2 * len / (double)ao->bps;
 
-    return ao_read_data(ao, data, len / ao->sstride, mp_time_us() + 1000000LL * delay);
+	struct ao_convert_fmt conv = {
+		.src_fmt    = AF_FORMAT_S16,
+		.channels   = 2,
+		.dst_bits   = 16,
+		.pad_lsb    = 0,
+	};
+
+	return ao_read_data_converted(ao, &conv, data, len / ao->sstride,
+			mp_time_us() + 1000000LL * delay);
+    //return ao_read_data(ao, data, len / ao->sstride, mp_time_us() + 1000000LL * delay);
 }
 
 static int init(struct ao *ao)
