@@ -1806,7 +1806,7 @@ bool mp_streamcb_lookup(struct mpv_global *g, const char *protocol,
     return found;
 }
 
-int mpv_audio_callback(uint16_t *stream, int len)
+int mpv_audio_callback(void *buffer, int len)
 {
-	return audio_callback(stream, len);
+	return audio_callback(buffer, len);
 }

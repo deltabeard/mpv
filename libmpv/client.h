@@ -1712,11 +1712,12 @@ void *mpv_get_sub_api(mpv_handle *ctx, mpv_sub_api sub_api);
  *
  * The audio_callback driver must have been selected and initialised prior to
  * calling this function.
- * This function fills a 16-bit block of data with len number of samples.
  *
- * Preliminary and not for submission.
+ * @param buffer Allocated buffer to store audio samples.
+ * @param len Length of allocated buffer.
+ * @return Number of samples stored in buffer, or negative on error.
  */
-int mpv_audio_callback(uint16_t *stream, int len);
+int mpv_audio_callback(void *buffer, int len);
 
 #ifdef __cplusplus
 }

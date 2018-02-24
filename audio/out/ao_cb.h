@@ -18,6 +18,6 @@
 #ifndef MP_AO_CALLBACK_H_
 #define MP_AO_CALLBACK_H_
 
-int audio_callback(uint16_t *stream, int len);
+int audio_callback(void *buffer, int len);
 
 #endif
